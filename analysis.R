@@ -12,8 +12,8 @@ consf <- read.table("scfp2007_data.csv", sep="," , header = TRUE)
 #DEBT=MRTHEL+RESDBT+OTHLOC+CCBAL+INSTALL+ODEBT;
 #EDN_INST        ,Total value of education loans held by household
 #EDCL            ,Education category of head of household
-#    1=no high school diploma/GED, 2=high school diploma or GED,
-#    3=some college, 4=college degree;
+#    				1=no high school diploma/GED, 2=high school diploma or GED,
+#    				3=some college, 4=college degree;
 #SAVING          ,Total value of savings accounts held by household
 
 attach(consf)
@@ -34,7 +34,8 @@ detach(consf.edudebt)
 zerosavings <- consf.edudebt[which(consf.edudebt$SAVING==0),]
 summary(zerosavings$DEBT)
 
-# How much savings do people with debt have?
+# Does debt grow with income?
+glm(consf$INCOME ~ consf$DEBT)
 # What is the family structure of people with debt? with savings?
 
 # What is the average debt/savings ratio for households of varying educational
@@ -51,6 +52,16 @@ summary(college.grads)
 
 hist(dropouts$DEBT[which(dropouts$DEBT < IQR(dropouts$DEBT))])
 #Do rich people participate in labor force?
+
+consf.cheat <- data.frame(INCOME = consf$INCOME, DEBT = consf$DEBT)
+consf.cheat$INCOME[which(consf.cheat$INCOME == 0)] <- 1
+consf.cheat$DEBT[which(consf.cheat$DEBT == 0)] <- 1
+glm.cheatlog <- glm(log(consf.cheat$DEBT, 10) ~ log(consf.cheat$INCOME, 10))
+
+png("logDebtVsIncome.png")
+plot(log(consf.cheat$INCOME, 10),log(consf.cheat$DEBT, 10), main="Debt and Income Ratio (corrected)",xlab="log(INCOME)", ylab="log(DEBT)")
+abline(glm.cheatlog)
+dev.off()
 
 
 
