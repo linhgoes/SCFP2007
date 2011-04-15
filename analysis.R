@@ -52,16 +52,16 @@ consf.networth$NETWORTH[which(consf.networth$NETWORTH <= 0)] <- 1
 consf.networth$DEBT[which(consf.networth$DEBT == 0)] <- 1
 glm.networthlog <- glm(log(consf.networth$DEBT, 10) ~ log(consf.networth$NETWORTH, 10))
 
-png("logDebtVsNetworthlist.png")
+png("logDebtVsNetworth.png")
 plot(log(consf.networth$NETWORTH, 10),log(consf.networth$DEBT, 10), main="Debt and Networth Ratio (corrected)",xlab="log(Networth)", ylab="log(DEBT)")
 abline(glm.networthlog)
 dev.off()
 
-#what if we only look at people with 0 or negative networth or 0 debt?
+#What is the average networth of people who do not work?
 
-# consf.networth <- consf.networth[which(consf.networth$OCCAT==4),]
-
-# What is the family structure of people with debt? with savings?
+consf.work <- data.frame(OCCAT2 = consf$OCCAT2, NETWORTH = consf$NETWORTH)
+consf.work<-consf.work[which(consf.work$OCCAT2 == 4),]
+summary(consf.work$NETWORTH)
 
 # What is the average debt/savings ratio for households of varying educational
 # backgrounds?
@@ -76,9 +76,34 @@ summary(dropouts)
 summary(college.grads)
 
 hist(dropouts$DEBT[which(dropouts$DEBT < IQR(dropouts$DEBT))])
-#Do rich people participate in labor force?
 
+#Is there a relationship between the types of information sources for borrowing and household debt?  Are certain sources more reliable?
+glm.bcall <- glm(consf$DEBT ~ consf$BCALL)
+summary(glm.bcall)
+glm.bdont <- glm(consf$DEBT ~ consf$BDONT)
+summary(glm.bdont)
+glm.bfinplan <- glm(consf$DEBT ~ consf$BFINPLAN)
+summary(glm.bfinplan)
+glm.bfinpro <- glm(consf$DEBT ~ consf$BFINPRO)
+summary(glm.bfinpro)
+glm.binternet <- glm(consf$DEBT ~ consf$BINTERNET)
+summary(glm.binternet)
+glm.bmag <- glm(consf$DEBT ~ consf$BMAGZNEWS)
+summary(glm.bmag)
+glm.bmail <- glm(consf$DEBT ~ consf$BMAILADTV)
+summary(glm.bmail)
+glm.bother <- glm(consf$DEBT ~ consf$BOTHER)
+summary(glm.bother)
+glm.self <- glm(consf$DEBT ~ consf$BSELF)
+summary(glm.self)
 
+# Is there a relationship between debt and family structure?
+consf.fam <- 
+
+#Extra code
+
+#consf.networth <- consf.networth[which(consf.networth$NETWORTH <= 0),]
+#glm.networthlog <- glm((consf.networth$DEBT) ~ (consf.networth$NETWORTH))
 
 
 # Variables we want:
