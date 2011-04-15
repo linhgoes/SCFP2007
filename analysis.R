@@ -97,8 +97,10 @@ summary(glm.bother)
 glm.self <- glm(consf$DEBT ~ consf$BSELF)
 summary(glm.self)
 
-# Is there a relationship between debt and family structure?
-consf.fam <- 
+# Is there a relationship between investment and family structure?
+consf.fam <- data.frame(FAMSTRUCT = consf$FAMSTRUCT, )
+
+#EQUITY          ,Total value of financial assets held by household that are invested in stock
 
 #Extra code
 
