@@ -4,7 +4,7 @@ rm(list=ls())
 # Exploratory commands go in the console
 
 consf <- read.table("scfp2007_data.csv", sep="," , header = TRUE)
-# codebook <- read.csv("scfp2007_codebook.csv", header=TRUE)
+# codebook <- read.csv("		scfp2007_codebook.csv", header=TRUE)
 
 # Education vs. Debt/Savings
 #total financial assets: FIN=LIQ+CDS+NMMF+STOCKS+BOND+RETQLIQ+SAVBND+CASHLI+OTHMA+OTHFIN;
@@ -35,7 +35,32 @@ zerosavings <- consf.edudebt[which(consf.edudebt$SAVING==0),]
 summary(zerosavings$DEBT)
 
 # Does debt grow with income?
-glm(consf$INCOME ~ consf$DEBT)
+consf.cheat <- data.frame(INCOME = consf$INCOME, DEBT = consf$DEBT)
+consf.cheat$INCOME[which(consf.cheat$INCOME == 0)] <- 1
+consf.cheat$DEBT[which(consf.cheat$DEBT == 0)] <- 1
+glm.cheatlog <- glm(log(consf.cheat$DEBT, 10) ~ log(consf.cheat$INCOME, 10))
+
+png("logDebtVsIncome.png")
+plot(log(consf.cheat$INCOME, 10),log(consf.cheat$DEBT, 10), main="Debt and Income Ratio (corrected)",xlab="log(INCOME)", ylab="log(DEBT)")
+abline(glm.cheatlog)
+dev.off()
+
+# It appears that people with no income have significant debt. So maybe a better question is "Does debt grow with networth?"
+
+consf.networth <- data.frame(DEBT = consf$DEBT, NETWORTH = consf$NETWORTH)
+consf.networth$NETWORTH[which(consf.networth$NETWORTH <= 0)] <- 1
+consf.networth$DEBT[which(consf.networth$DEBT == 0)] <- 1
+glm.networthlog <- glm(log(consf.networth$DEBT, 10) ~ log(consf.networth$NETWORTH, 10))
+
+png("logDebtVsNetworthlist.png")
+plot(log(consf.networth$NETWORTH, 10),log(consf.networth$DEBT, 10), main="Debt and Networth Ratio (corrected)",xlab="log(Networth)", ylab="log(DEBT)")
+abline(glm.networthlog)
+dev.off()
+
+#what if we only look at people with 0 or negative networth or 0 debt?
+
+# consf.networth <- consf.networth[which(consf.networth$OCCAT==4),]
+
 # What is the family structure of people with debt? with savings?
 
 # What is the average debt/savings ratio for households of varying educational
@@ -53,15 +78,6 @@ summary(college.grads)
 hist(dropouts$DEBT[which(dropouts$DEBT < IQR(dropouts$DEBT))])
 #Do rich people participate in labor force?
 
-consf.cheat <- data.frame(INCOME = consf$INCOME, DEBT = consf$DEBT)
-consf.cheat$INCOME[which(consf.cheat$INCOME == 0)] <- 1
-consf.cheat$DEBT[which(consf.cheat$DEBT == 0)] <- 1
-glm.cheatlog <- glm(log(consf.cheat$DEBT, 10) ~ log(consf.cheat$INCOME, 10))
-
-png("logDebtVsIncome.png")
-plot(log(consf.cheat$INCOME, 10),log(consf.cheat$DEBT, 10), main="Debt and Income Ratio (corrected)",xlab="log(INCOME)", ylab="log(DEBT)")
-abline(glm.cheatlog)
-dev.off()
 
 
 
